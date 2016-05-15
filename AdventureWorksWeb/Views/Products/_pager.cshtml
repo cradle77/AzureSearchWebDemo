@@ -1,0 +1,17 @@
+﻿@model ProductsViewModel
+
+<ul class="pager">
+    @for (int page = 0; page < this.Model.TotalPages; page++)
+    {
+        <li>
+            @if (page == this.Model.Paging.CurrentPage)
+            {
+                <b>@(page + 1)</b>
+            }
+            else
+            {
+                @Html.ActionLink((page + 1).ToString(), "Index", new { page = page, term = this.Model.SearchTerm, filter = this.Model.Filter })
+            }
+        </li>
+    }
+</ul>

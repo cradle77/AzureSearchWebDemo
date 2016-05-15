@@ -1,0 +1,10 @@
+﻿@model string
+
+@{
+    var imgSrc = String.Format("data:image/gif;base64,{0}", this.Model);
+}
+
+@if (this.Model != null)
+{
+    <img src="@imgSrc" />
+}

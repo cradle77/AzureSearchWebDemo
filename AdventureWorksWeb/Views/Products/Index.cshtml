@@ -1,0 +1,197 @@
+﻿@model ProductsViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@functions{
+    string BuildFilter(string key, string value)
+    {
+        var result = this.Model.Filter;
+
+        if (!string.IsNullOrWhiteSpace(result))
+        {
+            result += " and ";
+        }
+
+        result += $"{key} eq '{value}'";
+
+        return result;
+    }
+
+    IEnumerable<string> ParseFilters()
+    {
+        if (string.IsNullOrWhiteSpace(this.Model.Filter))
+        {
+            return Enumerable.Empty<string>();
+        }
+
+        var tokens = this.Model.Filter.Split(new string[] { " and " }, StringSplitOptions.RemoveEmptyEntries);
+
+        return tokens;
+    }
+}
+
+@section scripts{
+    <script>
+        $(function () {
+            $(".txt-search").autocomplete({
+                source: "@Url.Action("Suggest")",
+                minLength: 3
+            });
+        });
+    </script>
+}
+<style>
+    .pager {
+        list-style: none;
+    }
+
+        .pager li {
+            display: inline;
+            margin-right: 5px;
+        }
+
+    .search .form-control {
+        display: inline;
+        max-width: 400px;
+    }
+</style>
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+<div class="row">
+    <div class="col-md-3 filters">
+        <h3>Filters</h3>
+
+        @if (!string.IsNullOrWhiteSpace(this.Model.Filter))
+        {
+            <ul>
+                @foreach (var filter in this.ParseFilters())
+                {
+                    <li>@filter</li>
+                }
+            </ul>
+            @Html.ActionLink("Clear all", "Index", new { term = this.Model.SearchTerm })
+        }
+
+        @foreach (var facet in this.Model.Facets)
+        {
+            <h4>@facet.Key</h4>
+            <ul>
+                @foreach (var result in facet.Value)
+                {
+                    <li>
+                        @Html.ActionLink($"{result.Value} ({result.Count})", "Index", new { term = this.Model.SearchTerm, page = this.Model.Paging.CurrentPage, Filter = BuildFilter(facet.Key, result.Value.ToString()) })
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+
+    <div class="col-md-9">
+
+        <div class="row search">
+            <div class="col-md-12 text-center">
+                <form method="get">
+                    @Html.TextBox("term", this.Model.SearchTerm, new { @class = "form-control txt-search" })
+                    <input type="submit" value="Search" class="btn btn-default" />
+                </form>
+            </div>
+        </div>
+
+
+        @Html.Partial("_pager", this.Model)
+
+        <table class="table">
+            <tr>
+                <th></th>
+                <th>
+                    Category
+                </th>
+                <th>
+                    Model
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Number
+                </th>
+                <th>
+                    Color
+                </th>
+                <th>
+                    Cost
+                </th>
+                <th>
+                    List price
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in this.Model.Products)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Item1.ThumbnailPhoto, "_image")
+                    </td>
+                    <td>
+                        @if (item.Item2 != null && item.Item2.ContainsKey("CategoryName"))
+                        {
+                            <text>@Html.Raw(item?.Item2["CategoryName"].First())</text>
+                        }
+                        else
+                        {
+                            <text>@Html.DisplayFor(modelItem => item.Item1.CategoryName)</text>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Item2 != null && item.Item2.ContainsKey("ModelName"))
+                        {
+                            <text>@Html.Raw(item.Item2["ModelName"].First())</text>
+                        }
+                        else
+                        {
+                            <text>@Html.DisplayFor(modelItem => item.Item1.ModelName)</text>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Item2 != null && item.Item2.ContainsKey("Name"))
+                        {
+                            <text>@Html.Raw(item.Item2["Name"].First())</text>
+                        }
+                        else
+                        {
+                            <text>@Html.DisplayFor(modelItem => item.Item1.Name)</text>
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Item1.ProductNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Item1.Color)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Item1.StandardCost)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Item1.ListPrice)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Item1.ProductID }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.Item1.ProductID }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Item1.ProductID })
+                    </td>
+                </tr>
+            }
+        </table>
+
+        @Html.Partial("_pager", this.Model)
+
+    </div>
+</div>
