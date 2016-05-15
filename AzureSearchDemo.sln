@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSyncJob", "SearchSync
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{BB286C23-B05C-49CE-88EC-584D9A6D8CA0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{2552874D-A97C-4D8C-BD17-4D29A4D2A72E}"
+	ProjectSection(SolutionItems) = preProject
+		Database\AdventureWorks 2012 LT Script.zip = Database\AdventureWorks 2012 LT Script.zip
+		Database\CustomViews.sql = Database\CustomViews.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
